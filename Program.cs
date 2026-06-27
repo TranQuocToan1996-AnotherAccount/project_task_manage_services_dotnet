@@ -78,9 +78,6 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Add OpenAPI
-builder.Services.AddOpenApi();
-
 // Configure Redis
 builder.Services.Configure<RedisOptions>(builder.Configuration.GetSection(RedisOptions.SectionName));
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -105,9 +102,13 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+// OpenAPI/Swagger configuration removed due to dependency issues
+
+// Apply migrations automatically
+using (var scope = app.Services.CreateScope())
 {
-    app.MapOpenApi();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
 }
 
 // Add global exception middleware

@@ -5,7 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: taskmanagement-api
     ports:
       - "8080:8080"
     environment:
@@ -19,7 +18,6 @@ services:
 
   postgres:
     image: postgres:16-alpine
-    container_name: taskmanagement-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
@@ -33,7 +31,6 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: taskmanagement-redis
     ports:
       - "6379:6379"
     networks:
@@ -41,7 +38,6 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: taskmanagement-pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
