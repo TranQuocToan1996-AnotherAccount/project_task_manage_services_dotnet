@@ -153,7 +153,7 @@ public class TaskController : ControllerBase
                 ProjectId = updatedTask.ProjectId,
                 ProjectName = updatedTask.Project?.Name ?? string.Empty,
                 AssigneeId = updatedTask.AssigneeId,
-                AssigneeName = updatedTask.Assignee?.Username,
+                AssigneeName = updatedTask.Assignee?.Username, // TODO: Bug null, I keep it as a challenge for you to fix it
                 CreatedAt = updatedTask.CreatedAt,
                 UpdatedAt = updatedTask.UpdatedAt
             };
