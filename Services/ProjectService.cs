@@ -22,18 +22,8 @@ public class ProjectService : IProjectService
 
     public async Task<Project?> GetProjectByIdAsync(Guid id)
     {
-        var cacheKey = CacheKeys.Project(id);
-        var cachedProject = await _redisHelper.GetAsync<Project>(cacheKey);
-        
-        if (cachedProject != null)
-            return cachedProject;
-
-        var project = await _projectRepository.GetByIdAsync(id);
-        if (project != null)
-        {
-            await _redisHelper.SetAsync(cacheKey, project, TimeSpan.FromMinutes(5));
-        }
-        
+        var project = await _projectRepository.GetByIdAsync(id) ??
+            throw new KeyNotFoundException($"Project with id {id} not found");
         return project;
     }
 
