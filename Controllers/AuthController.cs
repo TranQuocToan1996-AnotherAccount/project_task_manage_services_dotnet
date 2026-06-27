@@ -35,7 +35,8 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var result = await _authService.LoginAsync(request);
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var result = await _authService.LoginAsync(request, ipAddress);
             return Ok(ApiResponse<LoginResponse>.Ok(result, "Login successful"));
         }
         catch (Exception ex)

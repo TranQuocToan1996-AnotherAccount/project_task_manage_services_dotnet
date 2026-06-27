@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using TaskManagement.Configurations;
 using TaskManagement.DTO.Auth;
+using TaskManagement.DTO.Kafka;
 using TaskManagement.Models;
 using TaskManagement.Repositories.Interfaces;
 using TaskManagement.Services.Interfaces;
@@ -12,12 +13,14 @@ public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly JwtOptions _jwtOptions;
+    private readonly IKafkaProducer _kafkaProducer;
     private static readonly Dictionary<string, Guid> _refreshTokens = new();
 
-    public AuthService(IUserRepository userRepository, IOptions<JwtOptions> jwtOptions)
+    public AuthService(IUserRepository userRepository, IOptions<JwtOptions> jwtOptions, IKafkaProducer kafkaProducer)
     {
         _userRepository = userRepository;
         _jwtOptions = jwtOptions.Value;
+        _kafkaProducer = kafkaProducer;
     }
 
     public async Task<LoginResponse> RegisterAsync(RegisterRequest request)
@@ -51,7 +54,7 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<LoginResponse> LoginAsync(LoginRequest request)
+    public async Task<LoginResponse> LoginAsync(LoginRequest request, string? ipAddress = null)
     {
         var user = await _userRepository.GetByUsernameAsync(request.Username);
         if (user == null)
@@ -63,6 +66,15 @@ public class AuthService : IAuthService
         var accessToken = JwtHelper.GenerateToken(user.Id, user.Username, _jwtOptions);
         var refreshToken = JwtHelper.GenerateRefreshToken();
         _refreshTokens[refreshToken] = user.Id;
+
+        // Publish login event to Kafka (fire-and-forget)
+        var loginEvent = new LoginEvent
+        {
+            UserId = user.Id,
+            Timestamp = DateTime.UtcNow,
+            IpAddress = ipAddress ?? "unknown"
+        };
+        _ = Task.Run(() => _kafkaProducer.PublishLoginEventAsync(loginEvent));
 
         return new LoginResponse
         {

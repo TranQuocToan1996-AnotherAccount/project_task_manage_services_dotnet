@@ -40,6 +40,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUserRepository, TaskManagement.Repositories.UserRepository>();
 builder.Services.AddScoped<IProjectRepository, TaskManagement.Repositories.ProjectRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskManagement.Repositories.TaskRepository>();
+builder.Services.AddScoped<ILoginInfoRepository, TaskManagement.Repositories.LoginInfoRepository>();
 
 // Register Services
 builder.Services.AddScoped<IUserService, TaskManagement.Services.UserService>();
@@ -87,6 +88,11 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     return ConnectionMultiplexer.Connect(redisOptions?.ConnectionString ?? "localhost:6379");
 });
 builder.Services.AddScoped<IRedisHelper, RedisHelper>();
+
+// Configure Kafka
+builder.Services.Configure<KafkaOptions>(builder.Configuration.GetSection(KafkaOptions.SectionName));
+builder.Services.AddSingleton<IKafkaProducer, KafkaProducer>();
+builder.Services.AddHostedService<LoginEventConsumer>();
 
 // Add CORS
 builder.Services.AddCors(options =>
