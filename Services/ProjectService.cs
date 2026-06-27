@@ -53,9 +53,8 @@ public class ProjectService : IProjectService
 
     public async Task<Project> CreateProjectAsync(Project project)
     {
-        var ownerExists = await _userRepository.ExistsAsync(project.OwnerId);
-        if (!ownerExists)
-            throw new KeyNotFoundException($"Owner with id {project.OwnerId} not found");
+        var owner = await _userRepository.GetByIdAsync(project.OwnerId) ?? throw new KeyNotFoundException($"Owner with id {project.OwnerId} not found");
+        project.Owner = owner;
 
         return await _projectRepository.CreateAsync(project);
     }
