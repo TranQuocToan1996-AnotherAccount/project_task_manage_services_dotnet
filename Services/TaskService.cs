@@ -46,16 +46,17 @@ public class TaskService : ITaskService
 
     public async Task<TaskItem> CreateTaskAsync(TaskItem task)
     {
-        var projectExists = await _projectRepository.ExistsAsync(task.ProjectId);
-        if (!projectExists)
+        var projectExists = await _projectRepository.GetByIdAsync(task.ProjectId);
+        if (projectExists == null)
             throw new KeyNotFoundException($"Project with id {task.ProjectId} not found");
 
-        if (task.AssigneeId.HasValue)
-        {
-            var assigneeExists = await _userRepository.ExistsAsync(task.AssigneeId.Value);
-            if (!assigneeExists)
-                throw new KeyNotFoundException($"Assignee with id {task.AssigneeId} not found");
-        }
+        if (!task.AssigneeId.HasValue)
+            throw new InvalidOperationException("AssigneeId is required for creating a task");
+
+
+        var assigneeExists = await _userRepository.ExistsAsync(task.AssigneeId.Value);
+        if (!assigneeExists)
+            throw new KeyNotFoundException($"Assignee with id {task.AssigneeId} not found");
 
         return await _taskRepository.CreateAsync(task);
     }
