@@ -208,8 +208,8 @@ public class TaskController : ControllerBase
         }
     }
 
-    [HttpPatch("{id}/status")]
-    public async Task<ActionResult<ApiResponse<TaskResponse>>> UpdateTaskStatus(Guid id, [FromBody] Models.TaskStatus status)
+    [HttpPatch("{id}/status/{status}")]
+    public async Task<ActionResult<ApiResponse<TaskResponse>>> UpdateTaskStatus(Guid id, Models.TaskStatus status)
     {
         try
         {
