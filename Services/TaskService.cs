@@ -24,18 +24,11 @@ public class TaskService : ITaskService
 
     public async Task<TaskItem?> GetTaskByIdAsync(Guid id)
     {
-        var cacheKey = CacheKeys.Task(id);
-        var cachedTask = await _redisHelper.GetAsync<TaskItem>(cacheKey);
-        
-        if (cachedTask != null)
-            return cachedTask;
-
         var task = await _taskRepository.GetByIdAsync(id);
-        if (task != null)
-        {
-            await _redisHelper.SetAsync(cacheKey, task, TimeSpan.FromMinutes(5));
-        }
-        
+
+        if (task == null)
+            throw new KeyNotFoundException($"Task with id {id} not found");
+            
         return task;
     }
 
