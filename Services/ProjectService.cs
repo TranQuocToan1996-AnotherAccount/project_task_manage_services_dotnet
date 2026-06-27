@@ -7,18 +7,11 @@ using TaskManagement.Utility;
 
 namespace TaskManagement.Services;
 
-public class ProjectService : IProjectService
+public class ProjectService(IProjectRepository projectRepository, IUserRepository userRepository, IRedisHelper redisHelper) : IProjectService
 {
-    private readonly IProjectRepository _projectRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IRedisHelper _redisHelper;
-
-    public ProjectService(IProjectRepository projectRepository, IUserRepository userRepository, IRedisHelper redisHelper)
-    {
-        _projectRepository = projectRepository;
-        _userRepository = userRepository;
-        _redisHelper = redisHelper;
-    }
+    private readonly IProjectRepository _projectRepository = projectRepository;
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IRedisHelper _redisHelper = redisHelper;
 
     public async Task<Project?> GetProjectByIdAsync(Guid id)
     {
