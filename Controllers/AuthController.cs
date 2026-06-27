@@ -60,11 +60,11 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
-    public async Task<ActionResult<ApiResponse<object>>> Logout([FromBody] string refreshToken)
+    public async Task<ActionResult<ApiResponse<object>>> Logout([FromBody] LogoutRequest request)
     {
         try
         {
-            await _authService.LogoutAsync(refreshToken);
+            await _authService.LogoutAsync(request.RefreshToken);
             return Ok(ApiResponse<object>.Ok(null, "Logout successful"));
         }
         catch (Exception ex)

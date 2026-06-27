@@ -14,7 +14,7 @@ public class AuthService : IAuthService
     private readonly IUserRepository _userRepository;
     private readonly JwtOptions _jwtOptions;
     private readonly IKafkaProducer _kafkaProducer;
-    private static readonly Dictionary<string, Guid> _refreshTokens = new();
+    private static readonly Dictionary<string, Guid> _refreshTokens = new(); // TODO: Must move the refresh token to Redis to avoid stateful app
 
     public AuthService(IUserRepository userRepository, IOptions<JwtOptions> jwtOptions, IKafkaProducer kafkaProducer)
     {
