@@ -12,5 +12,7 @@ public class UpdateUserRequest
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
 
-    public string? Password { get; set; }
+    [MinLength(6)]
+    [Required]
+    public required string Password { get; set; }
 }

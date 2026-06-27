@@ -105,7 +105,7 @@ public class UserController : ControllerBase
             {
                 Username = request.Username,
                 Email = request.Email,
-                PasswordHash = request.Password ?? string.Empty
+                PasswordHash = PasswordHasher.HashPassword(request.Password)
             };
             var updatedUser = await _userService.UpdateUserAsync(id, user);
             
