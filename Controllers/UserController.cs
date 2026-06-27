@@ -4,6 +4,7 @@ using TaskManagement.Common;
 using TaskManagement.DTO.User;
 using TaskManagement.Models;
 using TaskManagement.Services.Interfaces;
+using TaskManagement.Utility;
 
 namespace TaskManagement.Controllers;
 
@@ -75,7 +76,7 @@ public class UserController : ControllerBase
             {
                 Username = request.Username,
                 Email = request.Email,
-                PasswordHash = request.Password // This should be hashed in real implementation
+                PasswordHash = PasswordHasher.HashPassword(request.Password)
             };
             var createdUser = await _userService.CreateUserAsync(user);
             
