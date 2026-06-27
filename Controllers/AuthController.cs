@@ -45,11 +45,11 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh")]
-    public async Task<ActionResult<ApiResponse<LoginResponse>>> RefreshToken([FromBody] string refreshToken)
+    public async Task<ActionResult<ApiResponse<LoginResponse>>> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         try
         {
-            var result = await _authService.RefreshTokenAsync(refreshToken);
+            var result = await _authService.RefreshTokenAsync(request.RefreshToken);
             return Ok(ApiResponse<LoginResponse>.Ok(result, "Token refreshed successfully"));
         }
         catch (Exception ex)
