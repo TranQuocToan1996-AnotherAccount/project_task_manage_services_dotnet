@@ -20,7 +20,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<IEnumerable<UserResponse>>>> GetAllUsers()
+    public async Task<ActionResult<ApiResponse<IEnumerable<UserResponse>>>> GetAllUsers() // TODO: Add pagination because call like this will affect Database performance if there are too many users
     {
         try
         {
