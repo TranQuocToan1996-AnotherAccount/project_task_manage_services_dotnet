@@ -52,46 +52,94 @@ TaskManagement/
 └── docker-compose.yml    # Docker orchestration
 ```
 
+## Prerequisites
+
+- **.NET 10 SDK** - Download from [https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download)
+- **Docker & Docker Compose** - For containerized setup (optional but recommended)
+- **PostgreSQL** - For local development without Docker
+- **Redis** - For local development without Docker
+
 ## Running the Application
 
 ### Using Docker Compose (Recommended)
 
+This is the easiest way to get started as it handles all dependencies automatically.
+
 ```bash
-docker-compose up
+docker-compose up --build
 ```
 
 This will start:
-- API on port 8080
-- PostgreSQL on port 5432
-- Redis on port 6379
-- PgAdmin on port 5050
+- **API** on port 8080: http://localhost:8080
+- **PostgreSQL** on port 5432
+- **Redis** on port 6379
+- **PgAdmin** on port 5050 (http://localhost:5050)
+  - Email: admin@admin.com
+  - Password: admin
+
+To stop the services:
+```bash
+docker-compose down
+```
+
+To remove volumes (clears database data):
+```bash
+docker-compose down -v
+```
 
 ### Local Development
 
-1. **Install dependencies**:
+If you prefer to run without Docker, follow these steps:
+
+1. **Install .NET 10 SDK** (if not already installed)
+   ```bash
+   dotnet --version
+   ```
+
+2. **Install and start PostgreSQL**:
+   - Install PostgreSQL 16 or later
+   - Create a database named `taskdb`
+   - Default connection: `Host=localhost;Port=5432;Database=taskdb;Username=postgres;Password=your_password`
+
+3. **Install and start Redis**:
+   - Install Redis server
+   - Start Redis on default port 6379
+
+4. **Install EF Core tools** (if not already installed):
+   ```bash
+   dotnet tool install --global dotnet-ef
+   ```
+
+5. **Update appsettings.json** for local development:
+   ```json
+   {
+     "ConnectionStrings": {
+       "Postgres": "Host=localhost;Port=5432;Database=taskdb;Username=postgres;Password=your_password"
+     },
+     "Redis": {
+       "ConnectionString": "localhost:6379"
+     }
+   }
+   ```
+
+6. **Restore dependencies**:
    ```bash
    dotnet restore
    ```
 
-2. **Run database migrations**:
+7. **Run database migrations**:
    ```bash
-   export PATH="$PATH:/Users/at/.dotnet/tools"
    dotnet ef database update
    ```
 
-3. **Run the application**:
+8. **Run the application**:
    ```bash
    dotnet run
    ```
 
-The API will be available at `https://localhost:5001` or `http://localhost:5000`.
+The API will be available at `http://localhost:8080`.
 
-### Access Swagger UI
-
-When running locally, access the Swagger UI at:
-```
-https://localhost:5001/swagger
-```
+Note: Database migrations are applied automatically on startup when using Docker Compose.
 
 ## API Endpoints
 
